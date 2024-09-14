@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html>
+
+	<head> 
+		<meta charset="utf-8">
+		<title>Discovery for cFAN</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">					
+	</head>
+		
+	<body style="text-align:center">		
+		<h1>
+			<img src="./image/PhNetwork.png" alt="chip" width="64" height="64" "
+			style="./image/vertical-align:top"> Discovery
+		</h1>			
+					
+		<center>			
+			<button id="linkBtn" onclick="linkAll();"><img id="image" width=32 height=32 src="./image/JamLink.png"></button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<button id="unLinkBtn" onclick="unlinkAll()"><img id="image" width=32 height=32 src="./image/BxUnlink.png"></button>
+		</center>
+		
+		<center>
+			<canvas id="myCanvas" width="450" height="700" 
+				style="border:1px solid #d3d3d3;background:#ffffff">
+				<img src="./image/voip-gateway-128Thin.png" alt="gatewayThin" width=128 height=128 id="imgGatewayThin">
+				<img src="./image/voip-gateway-128Thick.png" alt="gatewayThick" width=128 height=128 id="imgGatewayThick">
+				<img src="./image/voip-gateway-128Clr.png" alt="gatewayClr" width=128 height=128 id="imgGatewayClr">
+				<img src="./image/IconParkOutlineCpuThin.svg" alt="chipThin" width=128 height=128 id="imgDrtThin">				
+				<img src="./image/IconParkOutlineCpuThick.svg" alt="chipThick" width=128 height=128 id="imgDrtThick">				
+				<img src="./image/IconParkOutlineCpuClr.svg" alt="chipClr" width=128 height=128 id="imgDrtClr">				
+				<img src="./image/Disconnected.svg" alt="drtDisconn" width=128 height=128 id="imgDisconn">	
+				<img src="./image/Connected.svg" alt="drtConn" width=128 height=128 id="imgConn">
+				<img src="./image/blank.png" alt="dvcBlank" width=128 height=128 id="imgBlank">
+				<img src="./image/mobile-phone-8-128Thin.png" alt="phoneThin" width=128px height=128px id="imgPhoneThin">			
+				<img src="./image/mobile-phone-8-128Thick.png" alt="phoneThick" width=128px height=128px id="imgPhoneThick">
+				<img src="./image/mobile-phone-8-128Clr.png" alt="phoneClr" width=128px height=128px id="imgPhoneClr">
+			</canvas>				
+		</center>
+		
+		<script>			
+			// link status of devices
+			var gtwLink   = {linkNode: "drt1", linkStatus: true,  lineInx: 0,  imgInxS:0, imgInxE: 1},
+				iphLink   = {linkNode: "drt5", linkStatus: true,  lineInx: 4,  imgInxS:6, imgInxE: 5},
+				drt1Link  = {linkNode: "drt2", linkStatus: true,  lineInx: 1,  imgInxS:1, imgInxE: 2},
+				drt2Link1 = {linkNode: "drt3", linkStatus: true,  lineInx: 2,  imgInxS:2, imgInxE: 3},
+				drt2Link2 = {linkNode: "drt4", linkStatus: true,  lineInx: 3,  imgInxS:2, imgInxE: 4},
+				drt5Link  = {linkNode: "drt1", linkStatus: true,  lineInx: 5,  imgInxS:5, imgInxE: 1};			
+			
+			// linked status of devices
+			var gtwOnline  = false,
+				iphOnline  = false,
+				drt1Online = false,
+				drt2Online = false,
+				drt3Online = false,
+				drt4Online = false,
+				drt5Online = false;
+				
+			// selected image for put conn or disconn image
+			var gtwSelected  = {selected: false, conn: false},
+				iphSelected  = {selected: false, conn: false},
+				drt1Selected = {selected: false, conn: false},
+				drt2Selected = {selected: false, conn: false},
+				drt3Selected = {selected: false, conn: false},
+				drt4Selected = {selected: false, conn: false},
+				drt5Selected = {selected: false, conn: false};
+				
+			var c=document.getElementById("myCanvas"),
+				ctx  =c.getContext("2d"),	
+				img  =document.getElementById("imgGatewayThin"),	
+				img1 =document.getElementById("imgGatewayThick"),
+				img5 =document.getElementById("imgGatewayClr"),				
+				img2 =document.getElementById("imgDrtThin"),	
+				img3 =document.getElementById("imgDrtThick"),
+				img4 =document.getElementById("imgDrtClr"),	
+				img6 =document.getElementById("imgConn"),	
+				img7 =document.getElementById("imgDisconn"),	
+				img8 =document.getElementById("imgBlank"),
+				img9 =document.getElementById("imgPhoneThin"),	
+				img10=document.getElementById("imgPhoneThick"),				
+				img11=document.getElementById("imgPhoneClr"),								
+				canvas = document.querySelector("canvas"),					
+							
+				// image position index
+				gtwp  = {x: 218, y:  52, w: 84, h: 84},	
+				iphp  = {x:  64, y:  52, w: 84, h: 84},
+				drt1p = {x: 236, y: 221, w: 48, h: 48},
+				drt2p = {x: 236, y: 376, w: 48, h: 48},
+				drt3p = {x: 134, y: 507, w: 48, h: 48},
+				drt4p = {x: 338, y: 507, w: 48, h: 48},
+				drt5p = {x:  82, y: 221, w: 48, h: 48},
+				
+				// image placed location and size for thin color
+				gtwThin  = {inx: img,  x:  gtwp.x, y:  gtwp.y, w:  gtwp.w, h:  gtwp.h},
+				iphThin  = {inx: img9, x:  iphp.x, y:  iphp.y, w:  iphp.w, h:  iphp.h},
+				drt1Thin = {inx: img2, x: drt1p.x, y: drt1p.y, w: drt1p.w, h: drt1p.h},
+				drt2Thin = {inx: img2, x: drt2p.x, y: drt2p.y, w: drt2p.w, h: drt2p.h},
+				drt3Thin = {inx: img2, x: drt3p.x, y: drt3p.y, w: drt3p.w, h: drt3p.h},
+				drt4Thin = {inx: img2, x: drt4p.x, y: drt4p.y, w: drt4p.w, h: drt4p.h},
+				drt5Thin = {inx: img2, x: drt5p.x, y: drt5p.y, w: drt5p.w, h: drt5p.h},
+				
+				
+				// image placed location and size for thick color image
+				gtwThick  = {inx:  img1, x:  gtwp.x, y:  gtwp.y, w:  gtwp.w, h:  gtwp.h},	
+				iphThick  = {inx: img10, x:  iphp.x, y:  iphp.y, w:  iphp.w, h:  iphp.h},
+				drt1Thick = {inx:  img3, x: drt1p.x, y: drt1p.y, w: drt1p.w, h: drt1p.h},
+				drt2Thick = {inx:  img3, x: drt2p.x, y: drt2p.y, w: drt2p.w, h: drt2p.h},
+				drt3Thick = {inx:  img3, x: drt3p.x, y: drt3p.y, w: drt3p.w, h: drt3p.h},
+				drt4Thick = {inx:  img3, x: drt4p.x, y: drt4p.y, w: drt4p.w, h: drt4p.h},
+				drt5Thick = {inx:  img3, x: drt5p.x, y: drt5p.y, w: drt5p.w, h: drt5p.h},
+				
+				// image placed location and size for Connected image
+				gtwConn  = {inx: img6, x:  gtwp.x, y:  gtwp.y, w:  gtwp.w, h:  gtwp.h},	
+				iphConn  = {inx: img6, x:  iphp.x, y:  iphp.y, w:  iphp.w, h:  iphp.h},	
+				drt1Conn = {inx: img6, x: drt1p.x, y: drt1p.y, w: drt1p.w, h: drt1p.h},
+				drt2Conn = {inx: img6, x: drt2p.x, y: drt2p.y, w: drt2p.w, h: drt2p.h},
+				drt3Conn = {inx: img6, x: drt3p.x, y: drt3p.y, w: drt3p.w, h: drt3p.h},
+				drt4Conn = {inx: img6, x: drt4p.x, y: drt4p.y, w: drt4p.w, h: drt4p.h},
+				drt5Conn = {inx: img6, x: drt5p.x, y: drt5p.y, w: drt5p.w, h: drt5p.h},
+				
+				// image placed location and size for Disconnected image
+				gtwDisconn  = {inx: img7, x:  gtwp.x, y:  gtwp.y, w:  gtwp.w, h:  gtwp.h},	
+				iphDisconn  = {inx: img7, x:  iphp.x, y:  iphp.y, w:  iphp.w, h:  iphp.h},	
+				drt1Disconn = {inx: img7, x: drt1p.x, y: drt1p.y, w: drt1p.w, h: drt1p.h},
+				drt2Disconn = {inx: img7, x: drt2p.x, y: drt2p.y, w: drt2p.w, h: drt2p.h},
+				drt3Disconn = {inx: img7, x: drt3p.x, y: drt3p.y, w: drt3p.w, h: drt3p.h},
+				drt4Disconn = {inx: img7, x: drt4p.x, y: drt4p.y, w: drt4p.w, h: drt4p.h},
+				drt5Disconn = {inx: img7, x: drt5p.x, y: drt5p.y, w: drt5p.w, h: drt5p.h},
+				
+				// image placed location and size for clear color image
+				gtwClr =  {inx:  img5, x:  gtwp.x, y:  gtwp.y, w:  gtwp.w, h:  gtwp.h},
+				iphClr =  {inx: img11, x:  iphp.x, y:  iphp.y, w:  iphp.w, h:  iphp.h},
+				drt1Clr = {inx:  img4, x: drt1p.x, y: drt1p.y, w: drt1p.w, h: drt1p.h},
+				drt2Clr = {inx:  img4, x: drt2p.x, y: drt2p.y, w: drt2p.w, h: drt2p.h},
+				drt3Clr = {inx:  img4, x: drt3p.x, y: drt3p.y, w: drt3p.w, h: drt3p.h},
+				drt4Clr = {inx:  img4, x: drt4p.x, y: drt4p.y, w: drt4p.w, h: drt4p.h},
+				drt5Clr = {inx:  img4, x: drt5p.x, y: drt5p.y, w: drt5p.w, h: drt5p.h},
+
+				// image placed location and size for blank image
+				gtwBlank =  {inx: img8, x:  gtwp.x, y:  gtwp.y, w:  gtwp.w, h:  gtwp.h},
+				iphBlank =  {inx: img8, x:  iphp.x, y:  iphp.y, w:  iphp.w, h:  iphp.h},
+				drt1Blank = {inx: img8, x: drt1p.x, y: drt1p.y, w: drt1p.w, h: drt1p.h},
+				drt2Blank = {inx: img8, x: drt2p.x, y: drt2p.y, w: drt2p.w, h: drt2p.h},
+				drt3Blank = {inx: img8, x: drt3p.x, y: drt3p.y, w: drt3p.w, h: drt3p.h},
+				drt4Blank = {inx: img8, x: drt4p.x, y: drt4p.y, w: drt4p.w, h: drt4p.h},
+				drt5Blank = {inx: img8, x: drt5p.x, y: drt5p.y, w: drt5p.w, h: drt5p.h},
+				
+				// connection line of start and end
+				gtwBottomP  = {x:   gtwp.x+(gtwp.w/2), y:     (gtwp.y+gtwp.h)},
+				iphBottomP  = {x:   iphp.x+(iphp.w/2), y:     (iphp.y+iphp.h)},
+				drt1TopP    = {x: drt1p.x+(drt1p.w/2), y:             drt1p.y},
+				drt1RightP  = {x:             drt1p.x, y: (drt1p.y+drt1p.h/2)},
+				drt1BottomP = {x: drt1p.x+(drt1p.w/2), y:   (drt1p.y+drt1p.h)},
+				drt2TopP    = {x: drt2p.x+(drt2p.w/2), y:             drt2p.y},
+				drt2BottomP = {x: drt2p.x+(drt2p.w/2), y:   (drt2p.y+drt2p.h)},
+				drt3TopP    = {x: drt3p.x+(drt3p.w/2), y:             drt3p.y},
+				drt4TopP    = {x: drt4p.x+(drt4p.w/2), y:             drt4p.y},
+				drt5TopP    = {x: drt5p.x+(drt5p.w/2), y:             drt5p.y},
+				drt5LeftP   = {x:     drt5p.x+drt5p.w, y: (drt5p.y+drt5p.h/2)},
+				
+				// image text
+				imgTextFont = "11pt NSimSun",
+				gtwText     = "Field Gateway",
+				iphText     = "Phone APP",
+				drt1Text1   = "Root",
+				drt1Text2   = "DRT 1",
+				drt2Text1   = "Local Base",
+				drt2Text2   = "  DRT 2",
+				drt3Text    = "DRT 3",
+				drt4Text    = "DRT 4",
+				drt5Text1    = " DUT",
+				drt5Text2    = "DRT 5",
+				
+				// image text position
+				gtwTextP   = {text: gtwText,    x:  gtwp.x-15, y:    gtwp.y-7},
+				iphTextP   = {text: iphText,    x:  iphp.x+8,  y:    iphp.y-7},
+				drt1Text1P = {text: drt1Text1,  x: drt1p.x+38, y:  drt1p.y-18},
+				drt1Text2P = {text: drt1Text2,  x: drt1p.x+38, y:   drt1p.y-1},
+				drt2Text1P = {text: drt2Text1,  x: drt2p.x+38, y:  drt2p.y-18},
+				drt2Text2P = {text: drt2Text2,  x: drt2p.x+38, y:   drt2p.y-1},
+				drt3TextP  = {text: drt3Text,   x:  drt3p.x+3, y:  drt3p.y+66},
+				drt4TextP  = {text: drt4Text,   x:  drt4p.x+3, y:  drt4p.y+66},
+				drt5Text1P = {text: drt5Text1,  x:  drt5p.x+3, y:  drt5p.y+66},
+				drt5Text2P = {text: drt5Text2,  x:  drt5p.x+3, y:  drt5p.y+83},
+								
+				// initial image tooltip text
+				gtwtext  = "Field Gateway",
+				iphtext  = "Phone APP",
+				
+				drt1text = "Device Name:DRT1 <br>" + 
+							"Device UUID:<br>" + "&nbsp f15e5f6e-909f-<br>" +
+							"&nbsp 4a07-9e78-<br>" + "&nbsp d66e7a2b55d6<br>" + 
+							"Device Location:<br>" + "&nbsp HLTPE-12RDP-33837992",
+				
+				drt2text = "Device Name:DRT2 <br>" + 
+							"Device UUID:<br>" + "&nbsp ec7d9aa9-e5ee-<br>" +
+							"&nbsp 4ca9-9dc6-<br>" + "&nbsp 7310fadf3937<br>" + 
+							"Device Location:<br>" + "&nbsp HLTPE-12RDP-83743235",	
+							
+				drt3text = "Device Name:DRT3 <br>" + 
+							"Device UUID:<br>" + "&nbsp 5782dfc5-b976-<br>" +
+							"&nbsp 4f36-b56b-<br>" + "&nbsp 402c8e2a7fdf<br>" + 
+							"Device Location:<br>" + "&nbsp HLTPE-32MRP-32783454",
+							
+				drt4text = "Device Name:DRT4 <br>" + 
+							"Device UUID:<br>" + "&nbsp bb57bed2-37b9-<br>" +
+							"&nbsp 4de0-96fc-<br>" + "&nbsp 23e1932097a4<br>" + 
+							"Device Location:<br>" + "&nbsp HLTPE-11SDM-87237575",
+							
+				drt5text = "Device Name:DRT5 <br>" + 
+							"Device UUID:<br>" + "&nbsp 44497e1b-cb02-<br>" +
+							"&nbsp 4a0d-aefa-<br>" + "&nbsp cad6ba1d1643<br>" + 
+							"Device Location:<br>" + "&nbsp HLTPE-05FNC-42252766",	
+							
+				// tool-tip width and offset of position
+				tgtwWidth   = 100,
+				tiphWidth   = 70,
+				tdrt1Width  = 180,
+				tdrt2Width  = 180,
+				tdrt3Width  = 180,
+				tdrt4Width  = 180,
+				tdrt5Width  = 180,
+				
+				// tool-tip offset of position
+				tgtwOffset  = tgtwWidth/2,
+				tiphOffset  = tiphWidth/2,
+				tdrt1Offset = tdrt1Width/2,
+				tdrt2Offset = tdrt2Width/2,
+				tdrt3Offset = tdrt3Width/2,
+				tdrt4Offset = tdrt4Width/2,
+				tdrt5Offset = tdrt5Width/2,				
+				
+				// create a tool-tip instance:				
+				tgtw  = new ToolTip(canvas,  gtwThin,  gtwtext,  tgtwWidth.width, 5000),		
+				tiph  = new ToolTip(canvas,  iphThin,  iphtext,  tiphWidth.width, 5000),		
+				tdrt1 = new ToolTip(canvas, drt1Thin, drt1text, tdrt1Width.width, 5000),
+				tdrt2 = new ToolTip(canvas, drt2Thin, drt2text, tdrt2Width.width, 5000),
+				tdrt3 = new ToolTip(canvas, drt3Thin, drt3text, tdrt3Width.width, 5000),
+				tdrt4 = new ToolTip(canvas, drt4Thin, drt4text, tdrt4Width.width, 5000),
+				tiph5 = new ToolTip(canvas, drt5Thin, drt5text, tdrt5Width.width, 5000),
+				
+			// tool-tip offset of position
+				tooltipOffset = {};
+			
+			// The Tool-Tip instance:
+			function ToolTip(canvas, region, text, width, timeout) {
+
+				var me = this,                                // self-reference for event handlers
+				    div = document.createElement("div"),      // the tool-tip div
+				    parent = canvas.parentNode,               // parent node for canvas
+				    visible = false;                          // current status
+			  
+				// set some initial styles, can be replaced by class-name etc.
+				div.style.cssText = 
+					"font-family:monospace;position:fixed;text-align:left;padding:7px;color:white;background:blue;pointer-events:none;width:" + width + "px";
+				div.innerHTML = text;
+			  
+				// show the tool-tip
+				this.show = function(pos) {
+					if (!visible) {                             // ignore if already shown (or reset time)
+						visible = true;                           // lock so it's only shown once
+						setDivPos(pos);                           // set position
+						parent.appendChild(div);                  // add to parent of canvas
+						setTimeout(hide, timeout);                // timeout for hide
+					}
+				}
+			  
+				// hide the tool-tip
+				function hide() {
+					visible = false;                            // hide it after timeout
+					parent.removeChild(div);                    // remove from DOM
+				}
+
+				// check mouse position, add limits as wanted... just for example:
+				function check(e) {	
+					var index = pos2Index(region);
+					var	offset = getOffset(index);
+					var pos = getPos(e),
+					    posAbs = {x: e.clientX-offset, y: e.clientY};  // div is fixed, so use clientX/Y
+					if (!visible &&
+						pos.x >= region.x && pos.x < region.x + region.w &&
+						pos.y >= region.y && pos.y < region.y + region.h) {	
+						div.innerHTML = updateDrtData(region);								
+						me.show(posAbs);          				// show tool-tip at this pos
+					}
+					else {
+						setDivPos(posAbs);                     // otherwise, update position
+						hide();
+						
+						var linkStatus = getDvcOnlineStatus(index);
+						var selFlag = getSelImgSelected(index);
+						if(!selFlag) {
+							if(linkStatus) {
+								clrSelImgConn(index);
+							}
+							else {
+								setSelImgConn(index);
+							}
+							setSelImgSelected(index);
+							rebuildConn();
+							clrSelImgSelected(index);
+						}
+					}
+				}
+			  
+			  // get mouse position relative to canvas
+			  function getPos(e) {
+				var r = canvas.getBoundingClientRect();
+				return {x: e.clientX - r.left, y: e.clientY - r.top}
+			  }
+			  
+			  // update and adjust div position if needed (anchor to a different corner etc.)
+			  function setDivPos(pos) {
+				if (visible){
+				  if (pos.x < 0) pos.x = 0;
+				  if (pos.y < 0) pos.y = 0;
+				  // other bound checks here
+				  div.style.left = pos.x + "px";
+				  div.style.top = pos.y + "px";
+				}
+			  }
+			  
+			  // we need to use shared event handlers:
+			  //canvas.addEventListener("mousemove", check);
+			  canvas.addEventListener("click", check);			 
+			}	
+			
+			function getOffset(index) {
+				switch(index) {
+					case 0:
+						return tgtwOffset;
+					case 1:
+						return tdrt1Offset;
+					case 2:
+						return tdrt2Offset;
+					case 3:
+						return tdrt3Offset;
+					case 4:
+						return tdrt4Offset;
+					case 5:
+						return tdrt5Offset;
+					case 6:
+						return tiphOffset;
+				}
+			}
+			
+			function drawImgThin(imgInx) {
+				drawImgBlank(imgInx);
+				switch(imgInx) {
+					case 0:
+						ctx.drawImage(gtwThin.inx, gtwThin.x, gtwThin.y, gtwThin.w, gtwThin.h);
+						break;
+					case 1:
+						ctx.drawImage(drt1Thin.inx, drt1Thin.x, drt1Thin.y, drt1Thin.w, drt1Thin.h);				 
+						break;
+					case 2:
+						ctx.drawImage(drt2Thin.inx, drt2Thin.x, drt2Thin.y, drt2Thin.w, drt2Thin.h);			 
+						break;
+					case 3:
+						ctx.drawImage(drt3Thin.inx, drt3Thin.x, drt3Thin.y, drt3Thin.w, drt3Thin.h);		 
+						break;
+					case 4:
+						ctx.drawImage(drt4Thin.inx, drt4Thin.x, drt4Thin.y, drt4Thin.w, drt4Thin.h);	 
+						break;
+					case 5:
+						ctx.drawImage(drt5Thin.inx, drt5Thin.x, drt5Thin.y, drt5Thin.w, drt5Thin.h);		 
+						break;
+					case 6:
+						ctx.drawImage(iphThin.inx, iphThin.x, iphThin.y, iphThin.w, iphThin.h);		 
+						break;
+				}
+			}
+			
+			function drawImgThick(imgInx) {
+				drawImgBlank(imgInx);
+				switch(imgInx) {
+					case 0:								
+						ctx.drawImage(gtwThick.inx, gtwThick.x, gtwThick.y, gtwThick.w, gtwThick.h);
+						break;
+					case 1:
+						ctx.drawImage(drt1Thick.inx, drt1Thick.x, drt1Thick.y, drt1Thick.w, drt1Thick.h);				 
+						break;
+					case 2:
+						ctx.drawImage(drt2Thick.inx, drt2Thick.x, drt2Thick.y, drt2Thick.w, drt2Thick.h);			 
+						break;
+					case 3:
+						ctx.drawImage(drt3Thick.inx, drt3Thick.x, drt3Thick.y, drt3Thick.w, drt3Thick.h);		 
+						break;
+					case 4:
+						ctx.drawImage(drt4Thick.inx, drt4Thick.x, drt4Thick.y, drt4Thick.w, drt4Thick.h);	 
+						break;
+					case 5:
+						ctx.drawImage(drt5Thick.inx, drt5Thick.x, drt5Thick.y, drt5Thick.w, drt5Thick.h);		 
+						break;
+					case 6:
+						ctx.drawImage(iphThick.inx, iphThick.x, iphThick.y, iphThick.w, iphThick.h);		 
+						break;
+				}
+			}
+
+			function drawImgConn(imgInx) {
+				drawImgBlank(imgInx);
+				switch(imgInx) {
+					case 0:								
+						ctx.drawImage(gtwConn.inx, gtwConn.x, gtwConn.y, gtwConn.w, gtwConn.h);
+						break;
+					case 1:
+						ctx.drawImage(drt1Conn.inx, drt1Conn.x, drt1Conn.y, drt1Conn.w, drt1Conn.h);				 
+						break;
+					case 2:
+						ctx.drawImage(drt2Conn.inx, drt2Conn.x, drt2Conn.y, drt2Conn.w, drt2Conn.h);			 
+						break;
+					case 3:
+						ctx.drawImage(drt3Conn.inx, drt3Conn.x, drt3Conn.y, drt3Conn.w, drt3Conn.h);		 
+						break;
+					case 4:
+						ctx.drawImage(drt4Conn.inx, drt4Conn.x, drt4Conn.y, drt4Conn.w, drt4Conn.h);	 
+						break;
+					case 5:
+						ctx.drawImage(drt5Conn.inx, drt5Conn.x, drt5Conn.y, drt5Conn.w, drt5Conn.h);		 
+						break;	
+					case 6:
+						ctx.drawImage(iphConn.inx, iphConn.x, iphConn.y, iphConn.w, iphConn.h);		 
+						break;
+				}
+			}
+			
+			function drawImgDisconn(imgInx) {
+				drawImgBlank(imgInx);
+				switch(imgInx) {
+					case 0:								
+						ctx.drawImage(gtwDisconn.inx, gtwDisconn.x, gtwDisconn.y, gtwDisconn.w, gtwDisconn.h);
+						break;
+					case 1:
+						ctx.drawImage(drt1Disconn.inx, drt1Disconn.x, drt1Disconn.y, drt1Disconn.w, drt1Disconn.h);				 
+						break;
+					case 2:
+						ctx.drawImage(drt2Disconn.inx, drt2Disconn.x, drt2Disconn.y, drt2Disconn.w, drt2Disconn.h);			 
+						break;
+					case 3:
+						ctx.drawImage(drt3Disconn.inx, drt3Disconn.x, drt3Disconn.y, drt3Disconn.w, drt3Disconn.h);		 
+						break;
+					case 4:
+						ctx.drawImage(drt4Disconn.inx, drt4Disconn.x, drt4Disconn.y, drt4Disconn.w, drt4Disconn.h);	 
+						break;
+					case 5:
+						ctx.drawImage(drt5Disconn.inx, drt5Disconn.x, drt5Disconn.y, drt5Disconn.w, drt5Disconn.h);		 
+						break;					
+					case 6:
+						ctx.drawImage(iphDisonn.inx, iphDisonn.x, iphDisonn.y, iphDisonn.w, iphDisonn.h);		 
+						break;
+				}
+			}
+			
+			function drawImgClr(imgInx) {
+				drawImgBlank(imgInx);
+				switch(imgInx) {
+					case 0:	
+						ctx.drawImage(gtwClr.inx, gtwClr.x, gtwClr.y, gtwClr.w, gtwClr.h);					
+						break;
+					case 1:
+						ctx.drawImage(drt1Clr.inx, drt1Clr.x, drt1Clr.y, drt1Clr.w, drt1Clr.h);				 
+						break;
+					case 2:
+						ctx.drawImage(drt2Clr.inx, drt2Clr.x, drt2Clr.y, drt2Clr.w, drt2Clr.h);			 
+						break;
+					case 3:
+						ctx.drawImage(drt3Clr.inx, drt3Clr.x, drt3Clr.y, drt3Clr.w, drt3Clr.h);		 
+						break;
+					case 4:
+						ctx.drawImage(drt4Clr.inx, drt4Clr.x, drt4Clr.y, drt4Clr.w, drt4Clr.h);	 
+						break;
+					case 5:
+						ctx.drawImage(drt5Clr.inx, drt5Clr.x, drt5Clr.y, drt5Clr.w, drt5Clr.h);		 
+						break;	
+					case 6:
+						ctx.drawImage(iphClr.inx, iphClr.x, iphClr.y, iphClr.w, iphClr.h);		 
+						break;
+				}
+			}
+			
+			function drawImgBlank(imgInx) {
+				switch(imgInx) {
+					case 0:	
+						ctx.drawImage(gtwBlank.inx, gtwBlank.x, gtwBlank.y, gtwBlank.w, gtwBlank.h);					
+						break;
+					case 1:
+						ctx.drawImage(drt1Blank.inx, drt1Blank.x, drt1Blank.y, drt1Blank.w, drt1Blank.h);				 
+						break;
+					case 2:
+						ctx.drawImage(drt2Blank.inx, drt2Blank.x, drt2Blank.y, drt2Blank.w, drt2Blank.h);			 
+						break;
+					case 3:
+						ctx.drawImage(drt3Blank.inx, drt3Blank.x, drt3Blank.y, drt3Blank.w, drt3Blank.h);		 
+						break;
+					case 4:
+						ctx.drawImage(drt4Blank.inx, drt4Blank.x, drt4Blank.y, drt4Blank.w, drt4Blank.h);	 
+						break;
+					case 5:
+						ctx.drawImage(drt5Blank.inx, drt5Blank.x, drt5Blank.y, drt5Blank.w, drt5Blank.h);		 
+						break;	
+					case 6:
+						ctx.drawImage(iphBlank.inx, iphBlank.x, iphBlank.y, iphBlank.w, iphBlank.h);		 
+						break;
+				}
+			}
+			
+			// true = connected image
+			function setSelImgConn(index) {
+				switch (index) {
+					case 0:
+						gtwSelected.conn = true;
+						break;
+					case 1:
+						drt1Selected.conn = true;
+						break;
+					case 2:
+						drt2Selected.conn = true;
+						break;
+					case 3:
+						drt3Selected.conn = true;
+						break;
+					case 4:
+						drt4Selected.conn = true;
+						break;
+					case 5:
+						drt5Selected.conn = true;
+						break;
+					case 6:
+						iphSelected.conn = true;
+						break;
+				}
+			}
+			
+			// false = diconnected image
+			function clrSelImgConn(index) {
+				switch (index) {
+					case 0:
+						gtwSelected.conn = false;
+						break;
+					case 1:
+						drt1Selected.conn = false;
+						break;
+					case 2:
+						drt2Selected.conn = false;
+						break;
+					case 3:
+						drt3Selected.conn = false;
+						break;
+					case 4:
+						drt4Selected.conn = false;
+						break;
+					case 5:
+						drt5Selected.conn = false;
+						break;
+					case 6:
+						iphSelected.conn = false;
+						break;
+				}
+			}
+			
+			function setSelImgSelected(index) {
+				switch (index) {
+					case 0:
+						gtwSelected.selected = true;
+						break;
+					case 1:
+						drt1Selected.selected = true;
+						break;
+					case 2:
+						drt2Selected.selected = true;
+						break;
+					case 3:
+						drt3Selected.selected = true;
+						break;
+					case 4:
+						drt4Selected.selected = true;
+						break;
+					case 5:
+						drt5Selected.selected = true;
+						break;
+					case 6:
+						iphSelected.selected = true;
+						break;
+				}
+			}
+			
+			function clrSelImgSelected(index) {
+				switch (index) {
+					case 0:
+						gtwSelected.selected = false;
+						break;
+					case 1:
+						drt1Selected.selected = false;
+						break;
+					case 2:
+						drt2Selected.selected = false;
+						break;
+					case 3:
+						drt3Selected.selected = false;
+						break;
+					case 4:
+						drt4Selected.selected = false;
+						break;
+					case 5:
+						drt5Selected.selected = false;
+						break;
+					case 6:
+						iphSelected.selected = false;
+						break;
+				}
+			}
+
+			function getSelImgSelected(index) {
+				switch (index) {
+					case 0:
+						return gtwSelected.selected;
+					case 1:
+						return drt1Selected.selected;						
+					case 2:
+						return drt2Selected.selected;
+					case 3:
+						return drt3Selected.selected;
+					case 4:
+						return drt4Selected.selected;
+					case 5:
+						return drt5Selected.selected;
+					case 6:
+						return iphSelected.selected;
+				}
+			}
+			
+			function getSelImgConn(index) {
+				switch (index) {
+					case 0:
+						return gtwSelected.conn;
+					case 1:
+						return drt1Selected.conn;					
+					case 2:
+						return drt2Selected.conn;
+					case 3:
+						return drt3Selected.conn;
+					case 4:
+						return drt4Selected.conn;
+					case 5:
+						return drt5Selected.conn;
+					case 6:
+						return iphSelected.conn;
+				}
+			}
+			
+			function rebuildConn() {
+				if(gtwSelected.selected) {
+					if(gtwSelected.conn) {
+						gtwLink.linkStatus = true;
+					}
+					else if(!gtwSelected.conn) {
+						gtwLink.linkStatus = false;
+					}
+					redrawImgLine();
+				}
+
+				else if(iphSelected.selected) {
+					if(iphSelected.conn) {
+						iphLink.linkStatus = true;
+					}
+					else if(!iphSelected.conn) {
+						iphLink.linkStatus = false;
+					}
+					redrawImgLine();
+				}
+				
+				else if(drt1Selected.selected) {
+					if(drt1Selected.conn) {
+						drt1Link.linkStatus = true;
+					}
+					else {
+						drt1Link.linkStatus = false;
+					}
+					redrawImgLine();					
+				}
+				
+				else if(drt2Selected.selected) {
+					if(drt2Selected.conn) {
+						drt2Link1.linkStatus = true;
+						drt2Link2.linkStatus = true;
+					}
+					else {
+						drt2Link1.linkStatus = false;
+						drt2Link2.linkStatus = false;
+					}
+					redrawImgLine();					
+				}
+				
+				else if(drt3Selected.selected) {
+					if(drt3Selected.conn) {
+						drt2Link1.linkStatus = true;
+					}
+					else {
+						drt2Link1.linkStatus = false;
+					}
+					redrawImgLine();					
+				}
+				else if(drt4Selected.selected) {
+					if(drt4Selected.conn) {
+						drt2Link2.linkStatus = true;
+					}
+					else {
+						drt2Link2.linkStatus = false;
+					}
+					redrawImgLine();					
+				}
+				else if(drt5Selected.selected) {
+					if(drt5Selected.conn) {
+						drt5Link.linkStatus = true;
+					}
+					else {
+						drt5Link.linkStatus = false;
+					}
+					redrawImgLine();					
+				}
+			}
+			
+			function updateDrtData(pos) {
+				if(pos.x==gtwp.x && pos.y==gtwp.y)        return  gtwtext;
+				else if(pos.x== iphp.x && pos.y== iphp.y) return  iphtext;				
+				else if(pos.x==drt1p.x && pos.y==drt1p.y) return drt1text;
+				else if(pos.x==drt2p.x && pos.y==drt2p.y) return drt2text;
+				else if(pos.x==drt3p.x && pos.y==drt3p.y) return drt3text;
+				else if(pos.x==drt4p.x && pos.y==drt4p.y) return drt4text;
+				else if(pos.x==drt5p.x && pos.y==drt5p.y) return drt5text;
+				else return "not available";
+			}
+			
+			function pos2Index(pos) {
+				if(pos.x==gtwp.x && pos.y==gtwp.y)        return 0;
+				else if(pos.x==drt1p.x && pos.y==drt1p.y) return 1;
+				else if(pos.x==drt2p.x && pos.y==drt2p.y) return 2;
+				else if(pos.x==drt3p.x && pos.y==drt3p.y) return 3;
+				else if(pos.x==drt4p.x && pos.y==drt4p.y) return 4;
+				else if(pos.x==drt5p.x && pos.y==drt5p.y) return 5;
+				else if(pos.x==iphp.x && pos.y==iphp.y)   return 6;
+				else return 0;
+			}
+			
+			function getDvcOnlineStatus(index) {
+				switch (index) {
+					case 0:
+						if(gtwLink.linkStatus) {
+							gtwOnline = true;
+						}
+						else {
+							gtwOnline = false;
+						}
+						return gtwOnline;
+						
+					case 1:
+						if(drt1Link.linkStatus) {
+							drt1Online = true;
+						}
+						else {
+							drt1Online = false;
+						}
+						return drt1Online;
+						
+					case 2:
+						if(drt2Link1.linkStatus || drt2Link2.linkStatus) {
+							drt2Online = true;
+						}
+						if(!drt2Link1.linkStatus && !drt2Link2.linkStatus) {
+							drt2Online = false;
+						}
+						return drt2Online;
+						
+					case 3:
+						if(drt2Link1.linkStatus) {
+							drt3Online = true;
+						}
+						else {
+							drt3Online = false;
+						}
+						return drt3Online;
+						
+					case 4:
+						if(drt2Link2.linkStatus) {
+							drt4Online = true;
+						}
+						else {
+							drt4Online = false;
+						}
+						return drt4Online;
+					
+					case 5:
+						if(drt5Link.linkStatus) {
+							drt5Online = true;
+						}
+						else {
+							drt5Online = false;
+						}
+						return drt5Online;
+						
+					case 6:
+						if(iphLink.linkStatus) {
+							iphOnline = true;
+						}
+						else {
+							iphOnline = false;
+						}
+						return iphOnline;
+				}
+			}
+			
+			function clearCanvas() {
+				ctx.clearRect(0, 0, c.width, c.height);
+			}
+			
+			function clearLine(start,end) {		
+				<!-- setLineDash([x,y]) x=segment px, y=gap px -->		
+				ctx.strokeStyle = '#ffffff';
+				ctx.lineWidth="1";
+				ctx.setLineDash([3,3]);	
+				ctx.beginPath();   
+				ctx.moveTo(start.x,start.y);  
+				ctx.lineTo(end.x,end.y);   		
+				ctx.stroke();			
+			}
+			
+			function drawLine(start,end) {						
+				clearLine(start,end);				
+				ctx.strokeStyle = '#0000ff';
+				ctx.lineWidth="1";
+				ctx.setLineDash([3,3]);	
+				ctx.beginPath();   
+				ctx.moveTo(start.x,start.y);  
+				ctx.lineTo(end.x,end.y);   		
+				ctx.stroke();	
+			}						
+			
+			function putText(imgTextP,txtFont) {
+				ctx.font = txtFont;
+				ctx.fillStyle = '#000000';
+				ctx.fillText(imgTextP.text, imgTextP.x, imgTextP.y);
+			}
+
+			function linkLine(lineInx) {
+				switch (lineInx) {					
+					case 0:
+						drawLine(gtwBottomP,drt1TopP);
+						break;
+					case 1:
+						drawLine(drt1BottomP,drt2TopP);
+						break;
+					case 2:
+						drawLine(drt2BottomP,drt3TopP);
+						break;
+					case 3:
+						drawLine(drt2BottomP,drt4TopP);
+						break;
+					case 4:
+						drawLine(iphBottomP,drt5TopP);
+						break;
+					case 5:
+						drawLine(drt5LeftP,drt1RightP);
+						break;
+				}			
+			}
+			
+			function unlinkLine(lineInx) {
+				switch (lineInx) {					
+					case 0:
+						clearLine(gtwBottomP,drt1TopP);
+						break;
+					case 1:
+						clearLine(drt1BottomP,drt2TopP);
+						break;
+					case 2:
+						clearLine(drt2BottomP,drt3TopP);
+						break;
+					case 3:
+						clearLine(drt2BottomP,drt4TopP);
+						break;
+					case 4:
+						clearLine(iphBottomP,drt5TopP);
+						break;	
+					case 5:
+						clearLine(drt5LeftP,drt1RightP);
+						break;
+				}			
+			}									
+			
+			// put device name
+			function putDvcName() {
+				putText(gtwTextP,imgTextFont);
+				putText(iphTextP,imgTextFont);
+				putText(drt1Text1P,imgTextFont);
+				putText(drt1Text2P,imgTextFont);
+				putText(drt2Text1P,imgTextFont);
+				putText(drt2Text2P,imgTextFont);
+				putText(drt3TextP,imgTextFont);
+				putText(drt4TextP,imgTextFont);
+				putText(drt5Text1P,imgTextFont);
+				putText(drt5Text2P,imgTextFont);
+			}
+
+			// put link line and image from link status of devices
+			function redrawImgLine() {
+				clearCanvas();
+				putDvcName();
+				if(!gtwLink.linkStatus) {
+					unlinkLine(gtwLink.lineInx);
+					drawImgThin(gtwLink.imgInxS);
+				}
+				else {
+					linkLine(gtwLink.lineInx);	
+					drawImgThick(gtwLink.imgInxS);	
+				}
+				
+				if(!iphLink.linkStatus) {
+					unlinkLine(iphLink.lineInx);
+					drawImgThin(iphLink.imgInxS);
+				}
+				else {
+					linkLine(iphLink.lineInx);	
+					drawImgThick(iphLink.imgInxS);	
+				}
+				
+				if(!drt1Link.linkStatus) {
+					unlinkLine(drt1Link.lineInx);
+					if(!gtwLink.linkStatus && !drt5Link.linkStatus) {
+						drawImgThin(drt1Link.imgInxS);
+					}
+					else {
+						drawImgThick(drt1Link.imgInxS);
+					}
+				}
+				else {
+					linkLine(drt1Link.lineInx);	
+					drawImgThick(drt1Link.imgInxS);
+				}
+			
+				if(!drt2Link1.linkStatus) {
+					unlinkLine(drt2Link1.lineInx);
+					drawImgThin(drt2Link1.imgInxE);
+				}
+				else {
+					linkLine(drt2Link1.lineInx);
+					drawImgThick(drt2Link1.imgInxE);
+				}			
+				
+				if(!drt2Link2.linkStatus) {
+					unlinkLine(drt2Link2.lineInx);
+					drawImgThin(drt2Link2.imgInxE);
+				}
+				else {
+					linkLine(drt2Link2.lineInx);
+					drawImgThick(drt2Link2.imgInxE);
+				}
+				
+				if(!drt5Link.linkStatus) {
+					unlinkLine(drt5Link.lineInx);
+					if(!iphLink.linkStatus) {
+						drawImgThin(drt5Link.imgInxS);
+					}
+					else {
+						drawImgThick(drt5Link.imgInxS);
+					}
+				}
+				else {
+					linkLine(drt5Link.lineInx);	
+					drawImgThick(drt5Link.imgInxS);
+				}
+
+				if(drt2Link1.linkStatus || drt2Link2.linkStatus || drt1Link.linkStatus) {
+					drawImgThick(drt2Link1.imgInxS);
+				}
+				else {
+					drawImgThin(drt2Link1.imgInxS);
+				}
+				
+				
+			}
+			
+			function linkAll() {
+				gtwLink.linkStatus = true;
+				iphLink.linkStatus = true;
+				drt1Link.linkStatus = true;
+				drt2Link1.linkStatus = true;
+				drt2Link2.linkStatus = true;
+				drt5Link.linkStatus = true;
+				redrawImgLine();
+			}
+			
+			function unlinkAll() {
+				gtwLink.linkStatus = false;
+				iphLink.linkStatus = false;
+				drt1Link.linkStatus = false;
+				drt2Link1.linkStatus = false;
+				drt2Link2.linkStatus = false;
+				drt5Link.linkStatus = false;
+				redrawImgLine();
+			}
+			
+			img.addEventListener("load", (e) => {
+			  redrawImgLine();
+			});	
+			
+		</script>
+			
+	</body>
+
+</html>
