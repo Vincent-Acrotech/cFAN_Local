@@ -4,102 +4,35 @@
 	<head> 
 		<meta charset="utf-8">
 		<title>Discovery for cFAN</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">	
 		
 		<style>
-			body {font-family: Arial, Helvetica, sans-serif;}
-			* {box-sizing: border-box;}
-
-			/* Button used to open the contact form - fixed at the bottom of the page */
-			.open-button {
-			  background-color: #555;
-			  color: white;
-			  padding: 16px 20px;
-			  border: none;
-			  cursor: pointer;
-			  opacity: 0.8;
-			  position: fixed;
-			  bottom: 23px;
-			  right: 28px;
-			  width: 280px;
-			}
-
-			/* The popup form - hidden by default */
-			.form-popup {
-			  display: none;
-			  position: fixed;
-			  bottom: 0;
-			  right: 15px;
-			  border: 3px solid #f1f1f1;
-			  z-index: 9;
-			}
-
-			/* Add styles to the form container */
-			.form-container {
-			  max-width: 300px;
-			  padding: 10px;
-			  background-color: white;
-			}
-
-			/* Full-width input fields */
-			.form-container input[type=text], .form-container input[type=password] {
-			  width: 100%;
-			  padding: 15px;
-			  margin: 5px 0 22px 0;
-			  border: none;
-			  background: #f1f1f1;
-			}
-
-			/* When the inputs get focus, do something */
-			.form-container input[type=text]:focus, .form-container input[type=password]:focus {
-			  background-color: #ddd;
-			  outline: none;
-			}
-
-			/* Set a style for the submit/login button */
-			.form-container .btn {
-			  background-color: #04AA6D;
-			  color: white;
-			  padding: 16px 20px;
-			  border: none;
-			  cursor: pointer;
-			  width: 100%;
-			  margin-bottom:10px;
-			  opacity: 0.8;
-			}
-
-			/* Add a red background color to the cancel button */
-			.form-container .cancel {
-			  background-color: red;
-			}
-
-			/* Add some hover effects to buttons */
-			.form-container .btn:hover, .open-button:hover {
-			  opacity: 1;
-			}
-		</style>
+			table {				
+				margin-left: auto;
+				margin-right: auto;
+				font-family: arial, sans-serif;
+				border-collapse: collapse;
+				width: 450px;
 				
+			}
+			
+			td, th {
+				border: 1px solid #cccccc;
+				text-align: center;
+				padding: 8px;
+			}
+			
+			tr:nth-child(even) {
+				background-color: #eeeeee;
+			}
+			</style>
 	</head>
 		
-	<body style="text-align:center">	
-		<div class="form-popup" id="myForm">
-			<form action="/action_page.php" class="form-container">
-				<h1>Data X'fer</h1>
-				<label for="email"><b>Email</b></label>
-				<input type="text" placeholder="Enter Email" name="email" required>
-
-				<label for="psw"><b>Password</b></label>
-				<input type="password" placeholder="Enter Password" name="psw" required>
-
-				<button type="submit" class="btn">Login</button>
-				<button type="button" class="btn cancel" onclick="closeForm()">Close</button>
-			</form>
-		</div>
-	
+	<body style="text-align:center">
 		<h1>
 			<img src="./image/LaNetworkWired.svg" alt="chip" width="48" height="48" "
 			style="vertical-align:top"> Discovery
-		</h1>			
+		</h1>							
 		
 		<label id="test1"></label>
 		<label id="test2"></label>
@@ -116,6 +49,44 @@
 			<button id="bleBtn" onclick="linkBluetoothClick()"><img id="imgBle" width=32 height=32 src="./image/MdiBluetoothOff.svg"></button>
 		</center>
 		
+		<table id="maptab">			
+			<tr>
+				<th></th>
+				<th>LB_1</th>
+				<th>NODE_1</th>
+			  	<th>NODE_2</th> 
+			  	<th>NODE_3</th>
+			</tr>
+			<tr>				
+				<th>LB_1</th>
+				<td></td>
+			  	<td></td> 
+			  	<td></th>
+				<td></th>
+			</tr>
+			<tr>
+				<th>NODE_1</th>
+				<td></td>
+			  	<td></td> 
+			  	<td></th>
+				<td></th>
+			</tr>
+			<tr>
+				<th>NODE_2</th>
+				<td></td>
+			  	<td></td> 
+			  	<td></th>
+				<td></th>
+			</tr>
+			<tr>
+				<th>NODE_3</th>
+				<td></td>
+			  	<td></td> 
+			  	<td></th>
+				<td></th>
+			</tr>			
+		</table>
+
 		<center>
 			<canvas id="myCanvas" width="450" height="700" 
 				style="border:1px solid #d3d3d3;background:#ffffff">
@@ -129,11 +100,11 @@
 				<img src="./image/Connected.svg" alt="drtConn" width=128 height=128 id="imgConn">
 				<img src="./image/blank.png" alt="dvcBlank" width=128 height=128 id="imgBlank">				
 				<img src="./image/FlatColorIconsDownload.svg" alt="dvcBlank" width=128 height=128 id="imgDownload">				
-				<img src="./image/FlatColorIconsUpload.svg" alt="dvcBlank" width=128 height=128 id="imgUpload">				
-			</canvas>				
+				<img src="./image/FlatColorIconsUpload.svg" alt="dvcBlank" width=128 height=128 id="imgUpload">												  
+			</canvas>							
 		</center>
-		
-		<script type="text/javascript">
+				
+		<script type="text/javascript">							
 			let device;
 			let notifyCharacteristic;
 			let writeCharacteristic;
@@ -147,8 +118,8 @@
 			const maskOffline = 0x07FF;
 			const disconData = (maskOffline+1) >> 1;
 
-			var SystemConn = {LB1:false, LB2:false, 
-					NODE11:false, NODE12:false, NODE21:false, NODE22:false};
+			var SystemConn = {LB1:true, LB2:true, 
+					NODE11:true, NODE12:true, NODE21:true, NODE22:true};
 
 			var lb1Edge = 0,
 				lb2Edge = 0,
@@ -176,6 +147,41 @@
 			
 			const connDeviceName = "cFAN_ROOT";
 
+			const DarkGreen = "#006400";
+			const DarkRed = "#8b0000";
+			const Blue = "#0000ff";
+			const DeepSkyBlue = "#00bfff";
+			const Black = "#000000";
+
+			var lineFormat = {gtwBotRootInx:0, gtwBotRootTopColor:Black, gtwBotRootTopDash:[],
+							  rootBotLb1TopInx:1, rootBotLb1TopColor:Black, rootBotLb1TopDash:[],
+
+							  lb1LeftN1TopInx:2, lb1LeftN1TopColor: DarkRed, lb1LeftN1TopDash:[6,2],
+							  lb1RightN2TopInx:3, lb1RightN2TopColor:DarkRed, lb1RightN2TopDash:[6,2],
+							  lb1BotLb2TopInx:4, lb1BotLb2TopColor: DarkRed, lb1BotLb2TopDash:[6,2],
+
+							  n1TopLb1LeftInx:5, n1TopLb1LeftColor: Blue, n1TopLb1LeftDash:[2,6],
+							  n1BotLb2LeftInx:6, n1BotLb2LeftColor: Blue, n1BotLb2LeftDash:[2,6],
+							  n1RightN2LeftInx:7, n1RightN2LeftColor:Blue, n1RightN2LeftDash:[2,6],
+
+							  n2TopLb1RightInx:8, n2TopLb1RightColor:DarkGreen, n2TopLb1RightDash:[6,6],
+							  n2BotLb2RightInx:9, n2BotLb2RightColor:DarkGreen, n2BotLb2RightDash:[6,6],
+							  n2LeftN1RightInx:10, n2LeftN1RightColor:DarkGreen, n2LeftN1RightDash:[6,6],
+
+							  lb2LeftN1BotInx:11, lb2LeftN1BotColor: DeepSkyBlue, lb2LeftN1BotDash:[3,3],
+							  lb2RightN2BotInx:12, lb2RightN2BotColor:DeepSkyBlue, lb2RightN2BotDash:[3,3],
+							  lb2TopLb1BotInx:13, lb2TopLb1BotColor: DeepSkyBlue, lb2TopLb1BotDash:[3,3]};
+				
+			var RoutingLB1to = [0,0,0];		// to LB2,N1,N2
+			var RoutingLB2to = [0,0,0];		// to LB1,N1,N2
+			var RoutingN1to  = [0,0,0];		// to LB1,LB2,N2
+			var RoutingN2to  = [0,0,0];		// to LB1,LB2,N1
+
+			const disconnCnt = 6;
+			var showLB1 = 0;
+			var disconnNode = [0,0,0,0];	// [LB_1, NODE_3(LB_2), NODE_1, NODE_2]
+			var connNode = [0,0,0,0];		// [LB_1, NODE_3(LB_2), NODE_1, NODE_2]
+
 			/*** DEFAULT information for cFAN ***/
 			const cFAN_GW_DFT	  = {DeviceName: "cFAN_DISCOVERY"};
 
@@ -183,19 +189,19 @@
 									 DeviceUUID: "0000000-0000-0000-0000-000000000000",
 									 DeviceLoc : "DFM-UUU"};
 			
-			const cFAN_LB1_DFT = 	{DeviceName: "cFAN_LB1",
+			const cFAN_LB1_DFT = 	{DeviceName: "LB1",
 									 DeviceUUID: "0000000-0000-0000-0000-000000000000",
 									 DeviceLoc : "DFM-UUU"};
 			
-			const cFAN_LB2_DFT = {DeviceName: "cFAN_LB2",
+			const cFAN_LB2_DFT = {DeviceName: "NODE_3",
 									 DeviceUUID: "0000000-0000-0000-0000-000000000000",
 									 DeviceLoc : "DFM-UUU"};
 
-			const cFAN_NODE_1_DFT = {DeviceName: "cFAN_NODE_1",
+			const cFAN_NODE_1_DFT = {DeviceName: "NODE_1",
 									 DeviceUUID: "0000000-0000-0000-0000-000000000000",
 									 DeviceLoc : "DFM-UUU"};
 
-			const cFAN_NODE_2_DFT = {DeviceName: "cFAN_NODE_2",
+			const cFAN_NODE_2_DFT = {DeviceName: "NODE_2",
 									 DeviceUUID: "0000000-0000-0000-0000-000000000000",
 									 DeviceLoc : "DFM-UUU"};
 
@@ -206,19 +212,19 @@
 									 DeviceUUID : "98007e9c-48d4-4522-93b1-05044c7e756b",
 									 DeviceLoc  : "DFM-7084"};
 			
-			const cFAN_LB1_INFO    = {DeviceName: "cFAN_LB1",
+			const cFAN_LB1_INFO    = {DeviceName: "LB1",
 									 DeviceUUID : "155b666f-bb69-42a6-ac5c-bddcc141c8ed",
 									 DeviceLoc  : "NDW-8864"};
 			
-			const cFAN_LB2_INFO 	= {DeviceName: "cFAN_LB2",
+			const cFAN_LB2_INFO 	= {DeviceName: "NODE_3",
 									 DeviceUUID : "aea1770b-eae4-410d-bb65-8d4b3cabddaa",
 									 DeviceLoc  : "EMG-5760"};
 
-			const cFAN_NODE_1_INFO = {DeviceName: "cFAN_NODE_1",
+			const cFAN_NODE_1_INFO = {DeviceName: "NODE_1",
 									 DeviceUUID : "565d421d-5107-4c89-9107-a718f986f63f",
 									 DeviceLoc  : "TMB-7052"};
 
-			const cFAN_NODE_2_INFO = {DeviceName: "cFAN_NODE_2",
+			const cFAN_NODE_2_INFO = {DeviceName: "NODE_2",
 									 DeviceUUID : "9a0b9a6b-7c49-4d0e-b610-fab91733eab8",
 									 DeviceLoc  : "SXC-4043"};
 
@@ -313,12 +319,12 @@
 				canvas = document.querySelector("canvas"),					
 							
 				// image position index
-				gtwp  = {x: 182, y:  52, w: 84, h: 84},				
-				drt1p = {x: 200, y: 221, w: 48, h: 48},
-				drt2p = {x: 100, y: 364, w: 48, h: 48},
-				drt3p = {x: 300, y: 364, w: 48, h: 48},
-				drt4p = {x: 100, y: 507, w: 48, h: 48},
-				drt5p = {x: 300, y: 507, w: 48, h: 48},
+				gtwp  = {x: 182, y:  50, w: 84, h: 84},				
+				drt1p = {x: 200, y: 220, w: 48, h: 48},			// Root
+				drt2p = {x: 200, y: 350, w: 48, h: 48},			// LB1
+				drt3p = {x: 200, y: 550, w: 48, h: 48},			// LB2(NODE_3)
+				drt4p = {x:  80, y: 450, w: 48, h: 48},			// NODE_1
+				drt5p = {x: 320, y: 450, w: 48, h: 48},			// NODE_2
 				
 				// image placed location and size for thin color
 				gtwThin  = {inx: img,  x:  gtwp.x, y:  gtwp.y, w: gtwp.w,  h:  gtwp.h},
@@ -386,50 +392,71 @@
 				
 				// connection line of start and end
 				gtwBottomP  = {x: gtwp.x+(gtwp.w/2),   y: (gtwp.y+gtwp.h)},
+
 				RootTopP    = {x: drt1p.x+(drt1p.w/2), y:  drt1p.y},
-				RootBottomLP = {x: drt1p.x+(drt1p.w/2)-10, y: (drt1p.y+drt1p.h)},
-				RootBottomRP = {x: drt1p.x+(drt1p.w/2)+10, y: (drt1p.y+drt1p.h)},
-				LB1TopP    	= {x: drt2p.x+(drt2p.w/2), y: (drt2p.y)},
-				LB1BottomP 	= {x: drt2p.x+24,		   y: (drt2p.y+drt2p.h)},
-				LB2TopP    	= {x: drt3p.x+(drt3p.w/2), y: (drt3p.y)},
-				LB2BottomP 	= {x: drt3p.x+24,		   y: (drt3p.y+drt3p.h)},
-				N1TopP   	= {x: drt4p.x+(drt4p.w/2), y:  drt4p.y},
-				N1BottomP 	= {x: drt4p.x+(drt4p.w),   y: (drt4p.y+drt4p.h/2)},
-				N2TopP  	= {x: drt5p.x+(drt5p.w/2), y: drt5p.y},
-				N2BottomP 	= {x: drt5p.x+(drt5p.w),   y: (drt5p.y+drt5p.h/2)},				
-				
+				RootBottomP = {x: drt1p.x+(drt1p.w/2), y: (drt1p.y+drt1p.h)},	
+
+				LB1TopP    	= {x: drt2p.x+(drt2p.w/2), y: drt2p.y},
+				LB1BottomrP	= {x: drt2p.x+(drt2p.w/2)+9, y: (drt2p.y+drt2p.h)},
+				LB1BottomlP	= {x: drt2p.x+(drt2p.w/2)-9, y: (drt2p.y+drt2p.h)},
+				LB1LeftuP  	= {x: drt2p.x, 			   y: (drt2p.y+drt2p.h/2)-9},
+				LB1LeftdP  	= {x: drt2p.x, 			   y: (drt2p.y+drt2p.h/2)+9},
+				LB1RightuP  = {x: drt2p.x+drt2p.w	 , y: (drt2p.y+drt2p.h/2)-9},
+				LB1RightdP  = {x: drt2p.x+drt2p.w	 , y: (drt2p.y+drt2p.h/2)+9},
+
+				LB2ToprP    = {x: drt3p.x+(drt3p.w/2)+9, y: drt3p.y},
+				LB2ToplP    = {x: drt3p.x+(drt3p.w/2)-9, y: drt3p.y},
+				LB2LeftdP 	= {x: drt3p.x,		       y: (drt3p.y+drt3p.h/2)+9},
+				LB2LeftuP 	= {x: drt3p.x,		       y: (drt3p.y+drt3p.h/2)-9},
+				LB2RightdP 	= {x: drt3p.x+drt3p.w	 , y: (drt3p.y+drt3p.h/2)+9},
+				LB2RightuP 	= {x: drt3p.x+drt3p.w	 , y: (drt3p.y+drt3p.h/2)-9},
+
+				N1ToplP   	= {x: drt4p.x+(drt4p.w/2)-9, y:  drt4p.y},
+				N1ToprP   	= {x: drt4p.x+(drt4p.w/2)+13, y:  drt4p.y},
+				N1BottomlP 	= {x: drt4p.x+(drt4p.w/2)-9, y: (drt4p.y+drt4p.h)},
+				N1BottomrP 	= {x: drt4p.x+(drt4p.w/2)+9, y: (drt4p.y+drt4p.h)},
+				N1RightdP  	= {x: drt4p.x+drt2p.w	 , y: (drt4p.y+drt4p.h/2)+9},
+				N1RightuP  	= {x: drt4p.x+drt2p.w	 , y: (drt4p.y+drt4p.h/2)-9},
+
+				N2ToprP  	= {x: drt5p.x+(drt5p.w/2)+9, y:  drt5p.y},
+				N2ToplP  	= {x: drt5p.x+(drt5p.w/2)-13, y:  drt5p.y},
+				N2BottomrP 	= {x: drt5p.x+(drt5p.w/2)+9, y: (drt5p.y+drt5p.h)},				
+				N2BottomlP 	= {x: drt5p.x+(drt5p.w/2)-9, y: (drt5p.y+drt5p.h)},
+				N2LeftdP 	= {x: drt5p.x,		       y: (drt5p.y+drt5p.h/2)+9},
+				N2LeftuP 	= {x: drt5p.x,		       y: (drt5p.y+drt5p.h/2)-9},
+
 				// image text
 				node0Name = " ",
-				LB1Name = "cFAN_LB_1",
-				LB2Name = "cFAN_LB_2",
-				node1Name = "cFAN_NODE_1",
-				node2Name = "cFAN_NODE_2",
+				LB1Name = "LB_1",
+				LB2Name = "NODE_3",
+				node1Name = "NODE_1",
+				node2Name = "NODE_2",
 
 				imgTextFont = "11pt NSimSun",
-				gtwText     = "APP",
+				gtwText     = "Gateway",
 				RootText1   = "ROOT",
 				RootText2   = "cFAN_ROOT",
 				LB1Text1     = "LocalBase",	
 				LB1Text2     = LB1Name,
-				LB2Text1     = "LocalBase",	
+				LB2Text1     = "NODE_3",	
 				LB2Text2     = LB2Name,									
-				Node1Text   = node1Name,
-				Node2Text   = node2Name,
+				Node1Text   = "NODE_1",
+				Node2Text   = "NODE_2",
 				TempHumiVal = "",				
 
 				// node name text index				
 				
 				// image text position
-				gtwTextP   = {text: gtwText,   x: gtwp.x-15,  y: gtwp.y-7},
+				gtwTextP   = {text: gtwText,   x: gtwp.x+15,  y: gtwp.y-7},
 				RootText1P = {text: RootText1, x: drt1p.x+38, y: drt1p.y-18},
 				RootText2P = {text: RootText2, x: drt1p.x+38, y: drt1p.y-1},
-				LB1Text1P  = {text: LB1Text1,  x: drt2p.x+48, y: drt2p.y-5},
-				LB1Text2P  = {text: LB1Text2,  x: drt2p.x+48, y: drt2p.y+10},	
-				LB2Text1P  = {text: LB2Text1,  x: drt3p.x+48, y: drt3p.y-5},
-				LB2Text2P  = {text: LB2Text2,  x: drt3p.x+48, y: drt3p.y+10},					
-				Node1TextP = {text: Node1Text, x: drt4p.x-20,  y: drt4p.y+66},
+				LB1Text1P  = {text: LB1Text1,  x: drt2p.x+38, y: drt2p.y-18},
+				LB1Text2P  = {text: LB1Text2,  x: drt2p.x+38, y: drt2p.y-1},	
+				LB2Text1P  = {text: LB2Text1,  x: drt3p.x-0, y: (drt3p.y+drt3p.h+15)},
+				LB2Text2P  = {text: LB2Text2,  x: drt3p.x-15, y: drt3p.y+10},					
+				Node1TextP = {text: Node1Text, x: drt4p.x+48,  y: (drt4p.y+6)},
 				Node1TextN2P = {text: Node2Text, x: drt4p.x-20,  y: drt4p.y+66},
-				Node2TextP = {text: Node2Text, x: drt5p.x-20,  y: drt5p.y+66},				
+				Node2TextP = {text: Node2Text, x: drt5p.x+45,  y: (drt5p.y+6)},				
 				Node2TextN1P = {text: Node1Text, x: drt5p.x-20,  y: drt5p.y+66},
 				
 				// Temperature/Humidity value position				
@@ -648,10 +675,10 @@
 
 						case 5:
 							if(SystemConn.NODE21) {	
-								text = "Device Name:"      + NODE1_INFO.DeviceName + "<br>" +
-									"Device UUID:<br>"     + NODE1_INFO.DeviceUUID + "<br>" +
-									"Device Location:<br>" + NODE1_INFO.DeviceLoc  + "<br>" +
-									"Thermohygrometer:<br>"+ NODE1_INFO.THMeter;
+								text = "Device Name:"      + NODE2_INFO.DeviceName + "<br>" +
+									"Device UUID:<br>"     + NODE2_INFO.DeviceUUID + "<br>" +
+									"Device Location:<br>" + NODE2_INFO.DeviceLoc  + "<br>" +
+									"Thermohygrometer:<br>"+ NODE2_INFO.THMeter;
 							}
 							else if(SystemConn.NODE22) {	
 								text = "Device Name:"      + NODE2_INFO.DeviceName + "<br>" +
@@ -668,6 +695,140 @@
 				//canvas.addEventListener("mousedown", check);
 				canvas.addEventListener("click", check);				
 			}							
+
+			function linkGtwRoot() {
+				linkLine(lineFormat.gtwBotRootInx);
+			}
+
+			function linkRootLb1() {
+				linkLine(lineFormat.rootBotLb1TopInx);
+			}
+
+			function linkLb1N1() {
+				linkLine(lineFormat.lb1LeftN1TopInx);
+			}
+
+			function linkLb1N2() {
+				linkLine(lineFormat.lb1RightN2TopInx);
+			}
+
+			function linkLb1Lb2() {
+				linkLine(lineFormat.lb1BotLb2TopInx);
+			}
+
+			function linkN1Lb1() {
+				linkLine(lineFormat.n1TopLb1LeftInx);
+			}
+
+			function linkN1Lb2() {
+				linkLine(lineFormat.n1BotLb2LeftInx);
+			}
+
+			function linkN1N2() {
+				linkLine(lineFormat.n1RightN2LeftInx);
+			}
+
+			function linkN2Lb1() {
+				linkLine(lineFormat.n2TopLb1RightInx);
+			}
+			
+			function linkN2Lb2() {
+				linkLine(lineFormat.n2BotLb2RightInx);
+			}
+
+			function linkN2N1() {
+				linkLine(lineFormat.n2LeftN1RightInx);
+			}
+
+			function linkLb2N1() {
+				linkLine(lineFormat.lb2LeftN1BotInx);
+			}
+
+			function linkLb2N2() {
+				linkLine(lineFormat.lb2RightN2BotInx);
+			}
+
+			function linkLb2Lb1() {
+				linkLine(lineFormat.lb2TopLb1BotInx);
+			}
+
+			function showMeshConn() {
+				var routingCnt = 0;				
+				if((RoutingLB1to[0]+RoutingLB1to[1]+RoutingLB1to[2]) != 0) {					
+					routingCnt++;
+					showThickImgLb1();
+					if(RoutingLB1to[0] != 0) {
+						showThickImgLb2();
+						linkLb1Lb2();
+					}
+					if(RoutingLB1to[1] != 0) {
+						showThickImgN1();
+						linkLb1N1();
+					}
+					if(RoutingLB1to[2] != 0) {
+						showThickImgN2();
+						linkLb1N2();
+					}	
+				}
+
+				if((RoutingLB2to[0]+RoutingLB2to[1]+RoutingLB2to[2]) != 0) {					
+					routingCnt++;
+					showThickImgLb2();	
+					if(RoutingLB2to[0] != 0) {
+						showThickImgLb1();
+						linkLb2Lb1();
+					}
+					if(RoutingLB2to[1] != 0) {
+						showThickImgN1();
+						linkLb2N1();
+					}
+					if(RoutingLB2to[2] != 0) {
+						showThickImgN2();
+						linkLb2N2();
+					}						
+				}
+
+				if((RoutingN1to[0]+RoutingN1to[1]+RoutingN1to[2]) != 0) {					
+					routingCnt++;
+					showThickImgN1();
+					if(RoutingN1to[0] != 0) {
+						showThickImgLb1();
+						linkN1Lb1();
+					}
+					if(RoutingN1to[1] != 0) {
+						showThickImgLb2();
+						linkN1Lb2();
+					}
+					if(RoutingN1to[2] != 0) {
+						showThickImgN2();
+						linkN1N2();
+					}						
+				}
+
+				if((RoutingN2to[0]+RoutingN2to[1]+RoutingN2to[2]) != 0) {					
+					routingCnt++;
+					showThickImgN2();
+					if(RoutingN2to[0] != 0) {
+						showThickImgLb1();
+						linkN2Lb1();
+					}
+					if(RoutingN2to[1] != 0) {
+						showThickImgLb2();
+						linkN2Lb2();
+					}
+					if(RoutingN2to[2] != 0) {
+						showThickImgN1();
+						linkN2N1();
+					}						
+				}
+
+				/*if(routingCnt != 0) {
+					showThickImgGtw();
+					showThickImgRoot();
+					linkGtwRoot();
+					linkRootLb1();
+				}*/
+			}
 
 			// get node name
 			function getNodeName(index) {
@@ -747,12 +908,12 @@
 			//			 1=link ROOT-NODE1, 2=link NODE1-NODE2
 			//			 3=link NODE2-NODE3, 4=link NODE4-NODE4
 			//	visible: 0=invisible, 1=visible
-			function showOneNodeLink(showPos, visible) {
+			function showOneNodeLink(showPos, visible,color) {
 				if(visible == 0) {
 					unlinkLine(showPos);
 				}
 				else {
-					linkLine(showPos);
+					linkLine(showPos,color);
 				}
 			}
 
@@ -766,10 +927,10 @@
 			//			 1=link ROOT-NODE1, 2=link NODE1-NODE2
 			//			 3=link NODE2-NODE3, 4=link NODE4-NODE4
 			function showAllNodeLink() {
-				showOneNodeLink(1,arrangeArray[4]);
-				showOneNodeLink(2,arrangeArray[9]);
-				showOneNodeLink(3,arrangeArray[14]);
-				showOneNodeLink(4,arrangeArray[19]);
+				showOneNodeLink(1,arrangeArray[4],Blue);
+				showOneNodeLink(2,arrangeArray[9],Blue);
+				showOneNodeLink(3,arrangeArray[14],Blue);
+				showOneNodeLink(4,arrangeArray[19],Blue);
 			}
 
 			function Init_Node_Info() {
@@ -820,8 +981,43 @@
 				NODE2_INFO.DeviceLoc  = cFAN_NODE_2_INFO.DeviceLoc;				
 			}
 
+			function showThinImgGtw() {
+				drawImgThin(0);
+				putDvcGtwName();
+			}
+
+			function showThinImgRoot() {
+				drawImgThin(1);
+				putDvcRootName();
+			}
+
+			function showThinImgLb1() {
+				drawImgThin(2);
+				putDvcLb1Name();
+			}
+
+			function showThinImgLb2() {
+				drawImgThin(3);
+				putDvcLb2Name();
+			}
+
+			function showBlankImgLb2() {
+				drawImgBlank(3);
+				putDvcLb2Name();
+			}
+
+			function showThinImgN1() {
+				drawImgThin(4);
+				putDvcN1Name();
+			}
+
+			function showThinImgN2() {
+				drawImgThin(5);
+				putDvcN2Name();
+			}
+
 			function drawImgThin(imgInx) {
-				drawImgBlank(imgInx);
+				//drawImgBlank(imgInx);
 				switch(imgInx) {
 					case 0:
 						ctx.drawImage(gtwThin.inx, gtwThin.x, gtwThin.y, gtwThin.w, gtwThin.h);
@@ -844,8 +1040,37 @@
 				}
 			}
 			
+			function showThickImgGtw() {
+				drawImgThick(0);
+				putDvcGtwName();
+			}
+
+			function showThickImgRoot() {
+				drawImgThick(1);
+				putDvcRootName();
+			}
+			
+			function showThickImgLb1() {
+				drawImgThick(2);
+				putDvcLb1Name();
+			}
+
+			function showThickImgLb2() {
+				drawImgThick(3);
+				putDvcLb2Name();
+			}			
+
+			function showThickImgN1() {
+				drawImgThick(4);
+				putDvcN1Name();
+			}
+
+			function showThickImgN2() {
+				drawImgThick(5);
+				putDvcN2Name();
+			}
+
 			function drawImgThick(imgInx) {
-				drawImgBlank(imgInx);
 				switch(imgInx) {
 					case 0:								
 						ctx.drawImage(gtwThick.inx, gtwThick.x, gtwThick.y, gtwThick.w, gtwThick.h);
@@ -864,6 +1089,29 @@
 						break;
 					case 5:
 						ctx.drawImage(drt5Thick.inx, drt5Thick.x, drt5Thick.y, drt5Thick.w, drt5Thick.h);		 
+						break;					
+				}
+			}
+
+			function drawImgBlank(imgInx) {				
+				switch(imgInx) {
+					case 0:								
+						ctx.drawImage(gtwBlank.inx, gtwBlank.x, gtwBlank.y, gtwBlank.w, gtwBlank.h);
+						break;
+					case 1:
+						ctx.drawImage(drt1Blank.inx, drt1Blank.x, drt1Blank.y, drt1Blank.w, drt1Blank.h);				 
+						break;
+					case 2:
+						ctx.drawImage(drt2Blank.inx, drt2Blank.x, drt2Blank.y, drt2Blank.w, drt2Blank.h);			 
+						break;
+					case 3:
+						ctx.drawImage(drt3Blank.inx, drt3Blank.x, drt3Blank.y, drt3Blank.w, drt3Blank.h);		 
+						break;
+					case 4:
+						ctx.drawImage(drt4Blank.inx, drt4Blank.x, drt4Blank.y, drt4Blank.w, drt4Blank.h);	 
+						break;
+					case 5:
+						ctx.drawImage(drt5Blank.inx, drt5Blank.x, drt5Blank.y, drt5Blank.w, drt5Blank.h);		 
 						break;					
 				}
 			}
@@ -986,30 +1234,7 @@
 						ctx.drawImage(drt5Clr.inx, drt5Clr.x, drt5Clr.y, drt5Clr.w, drt5Clr.h);		 
 						break;					
 				}
-			}
-			
-			function drawImgBlank(imgInx) {
-				switch(imgInx) {
-					case 0:	
-						ctx.drawImage(gtwBlank.inx, gtwBlank.x, gtwBlank.y, gtwBlank.w, gtwBlank.h);					
-						break;
-					case 1:
-						ctx.drawImage(drt1Blank.inx, drt1Blank.x, drt1Blank.y, drt1Blank.w, drt1Blank.h);				 
-						break;
-					case 2:
-						ctx.drawImage(drt2Blank.inx, drt2Blank.x, drt2Blank.y, drt2Blank.w, drt2Blank.h);			 
-						break;
-					case 3:
-						ctx.drawImage(drt3Blank.inx, drt3Blank.x, drt3Blank.y, drt3Blank.w, drt3Blank.h);		 
-						break;
-					case 4:
-						ctx.drawImage(drt4Blank.inx, drt4Blank.x, drt4Blank.y, drt4Blank.w, drt4Blank.h);	 
-						break;
-					case 5:
-						ctx.drawImage(drt5Blank.inx, drt5Blank.x, drt5Blank.y, drt5Blank.w, drt5Blank.h);		 
-						break;					
-				}
-			}
+			}			
 			
 			// true = connected image
 			function setSelImgConn(index) {
@@ -1274,11 +1499,12 @@
 				ctx.stroke();			
 			}
 			
-			function drawLine(start,end) {						
+			function drawLine(start, end, color, dash) {						
 				clearLine(start,end);				
-				ctx.strokeStyle = '#0000ff';
+				ctx.strokeStyle = color;
 				ctx.lineWidth="1";
-				ctx.setLineDash([3,3]);	
+				ctx.setLineDash(dash);
+				//ctx.setLineDash([]);	
 				ctx.beginPath();   
 				ctx.moveTo(start.x,start.y);  
 				ctx.lineTo(end.x,end.y);   		
@@ -1291,22 +1517,53 @@
 				ctx.fillText(imgTextP.text, imgTextP.x, imgTextP.y);
 			}			
 
+			// 0:gtwBottomP-RootTopP, 1:RootBottomP,LB1TopP
+			// 2:LB1LeftP-N1TopP,	  3:LB1LeftP-N2TopP
+			// 4:N1BottomP-LB2LeftP,  5:N2BottomP-LB2RightP
+			// 6:N1RightP-N2LeftP,    7:LB1BottomP-LB2TopP
 			function linkLine(lineInx) {
 				switch (lineInx) {					
 					case 0:
-						drawLine(gtwBottomP,RootTopP);
+						drawLine(gtwBottomP,RootTopP,lineFormat.gtwBotRootTopColor,lineFormat.gtwBotRootTopDash);
 						break;
 					case 1:
-						drawLine(RootBottomLP,LB1TopP);
+						drawLine(RootBottomP,LB1TopP,lineFormat.rootBotLb1TopColor,lineFormat.rootBotLb1TopDash);
 						break;
 					case 2:
-						drawLine(RootBottomRP,LB2TopP);
+						drawLine(LB1LeftuP,N1ToplP,lineFormat.lb1LeftN1TopColor,lineFormat.lb1LeftN1TopDash);
 						break;
 					case 3:
-						drawLine(LB1BottomP,N1TopP);
+						drawLine(LB1RightuP,N2ToprP,lineFormat.lb1RightN2TopColor,lineFormat.lb1RightN2TopDash);
 						break;
 					case 4:
-						drawLine(LB2BottomP,N2TopP);
+						drawLine(LB1BottomrP,LB2ToprP,lineFormat.lb1BotLb2TopColor,lineFormat.lb1BotLb2TopDash);
+						break;
+					case 5:
+						drawLine(N1ToprP,LB1LeftdP,lineFormat.n1TopLb1LeftColor,lineFormat.n1TopLb1LeftDash);
+						break;
+					case 6:
+						drawLine(N1BottomrP,LB2LeftuP,lineFormat.n1BotLb2LeftColor,lineFormat.n1BotLb2LeftDash);
+						break;
+					case 7:
+						drawLine(N1RightuP,N2LeftuP,lineFormat.n1RightN2LeftColor,lineFormat.n1RightN2LeftDash);
+						break;
+					case 8:
+						drawLine(N2ToplP,LB1RightdP,lineFormat.n2TopLb1RightColor,lineFormat.n2TopLb1RightDash);
+						break;
+					case 9:
+						drawLine(N2BottomlP,LB2RightuP,lineFormat.n2BotLb2RightColor,lineFormat.n2BotLb2RightDash);
+						break;
+					case 10:
+						drawLine(N2LeftdP,N1RightdP,lineFormat.n2LeftN1RightColor,lineFormat.n2LeftN1RightDash);
+						break;
+					case 11:
+						drawLine(LB2LeftdP,N1BottomlP,lineFormat.lb2LeftN1BotColor,lineFormat.lb2LeftN1BotDash);
+						break;
+					case 12:
+						drawLine(LB2RightdP,N2BottomrP,lineFormat.lb2RightN2BotColor,lineFormat.lb2RightN2BotDash);
+						break;
+					case 13:
+						drawLine(LB2ToplP,LB1BottomlP,lineFormat.lb2TopLb1BotColor,lineFormat.lb2TopLb1BotDash);
 						break;
 				}			
 			}
@@ -1331,6 +1588,57 @@
 				}			
 			}									
 			
+			function putDvcGtwName() {
+				putDeviceName(0);
+			}
+
+			function putDvcRootName() {
+				putDeviceName(1);
+			}
+
+			function putDvcLb1Name() {
+				putDeviceName(2);
+			}
+
+			function putDvcLb2Name() {
+				putDeviceName(3);
+			}
+
+			function putDvcN1Name() {
+				putDeviceName(4);
+			}
+
+			function putDvcN2Name() {
+				putDeviceName(5);
+			}
+
+			// 0:Gateway,		1:Root,		2:LB1
+			// 3:LB2(NODE_3)	4:NODE_1,	5:NODE_2
+			function putDeviceName(index) {
+				switch(index) {
+					case 0:
+						putText(gtwTextP,imgTextFont);
+						break;
+					case 1:
+						putText(RootText1P,imgTextFont);
+						putText(RootText2P,imgTextFont);
+						break;
+					case 2:
+						putText(LB1Text1P,imgTextFont);
+						putText(LB1Text2P,imgTextFont);
+						break;
+					case 3:
+						putText(LB2Text1P,imgTextFont);							
+						break;
+					case  4:
+						putText(Node1TextP,imgTextFont);
+						break;
+					case 5:
+						putText(Node2TextP,imgTextFont);
+						break;
+				}
+			}
+
 			// put device name
 			function putDvcName() {
 				putText(gtwTextP,imgTextFont);
@@ -1346,14 +1654,24 @@
 
 			function showThinInit() {
 				clearCanvas();
-				showThinGwRoot();
-				showThinRootLb1();
-				showThinRootLb2();
+				showThinImgGtw();
+				showThinImgRoot();
+				showThinImgLb1();				
 			}			
 			
 			function showRootConn() {
-				showThinInit();
-				showThickGwRoot();				
+				clearCanvas();
+				showThickImgGtw();
+				showThickImgRoot();
+				linkGtwRoot();
+				if(showLB1 == 1) {
+					showThickImgLb1();
+					linkRootLb1();
+				}
+				else {
+					showThinImgLb1();
+				}
+				
 			}			
 
 			function showSystemConn() {
@@ -1403,24 +1721,21 @@
 			function showThinGwRoot() {
 				drawImgThin(GWLinkRT.imgInxS);
 				drawImgThin(GWLinkRT.imgInxE);								
-				putText(gtwTextP,imgTextFont);
-				
+				putText(gtwTextP,imgTextFont);			
 				putText(RootText1P,imgTextFont);
 				putText(RootText2P,imgTextFont);				
 			}	
-
+			
 			function showThickRootLb1() {
 				drawImgThick(RTLinkLB1.imgInxS);
-				drawImgThick(RTLinkLB1.imgInxE);
-				linkLine(RTLinkLB1.lineInx);
+				drawImgThick(RTLinkLB1.imgInxE);				
 				putText(LB1Text1P,imgTextFont);
 				putText(LB1Text2P,imgTextFont);		
 			}			
 
 			function showThinRootLb1() {
 				drawImgThin(RTLinkLB1.imgInxS);
-				drawImgThin(RTLinkLB1.imgInxE);
-				unlinkLine(RTLinkLB1.lineInx);
+				drawImgThin(RTLinkLB1.imgInxE);				
 				putText(LB1Text1P,imgTextFont);
 				putText(LB1Text2P,imgTextFont);		
 			}	
@@ -1447,7 +1762,7 @@
 				putText(Node1TextP,imgTextFont);				
 			}			
 
-			function showThickLb1Node2() {				
+			function showThickLb1Node2(color) {				
 				drawImgThick(LB1LinkN1.imgInxE);
 				linkLine(LB1LinkN1.lineInx);
 				putText(Node1TextN2P,imgTextFont);				
@@ -1469,19 +1784,7 @@
 				drawImgThin(LB1LinkN1.imgInxE);
 				unlinkLine(LB1LinkN1.lineInx);
 				putText(Node1TextP,imgTextFont);				
-			}			
-			
-			function showThickLb2Node2() {				
-				drawImgThick(LB2LinkN2.imgInxE);
-				linkLine(LB2LinkN2.lineInx);
-				putText(Node2TextP,imgTextFont);				
-			}
-
-			function showThickLb2Node1() {				
-				drawImgThick(LB2LinkN2.imgInxE);
-				linkLine(LB2LinkN2.lineInx);
-				putText(Node2TextN1P,imgTextFont);				
-			}
+			}												
 
 			function showThinLb2Node2() {				
 				drawImgThin(LB2LinkN2.imgInxE);
@@ -1616,29 +1919,7 @@
 					linkLine(RTLinkLB2.lineInx);	
 					drawImgThick(RTLinkLB2.imgInxE);
 					drt3ImgThickType = true;
-				}								
-
-				/*if(!LB1LinkN1.linkStatus) {
-					unlinkLine(LB1LinkN1.lineInx);
-					drawImgThin(LB1LinkN1.imgInxE)
-					drt4ImgThickType = false;
-				}
-				else {
-					linkLine(LB1LinkN1.lineInx);
-					drawImgThick(LB1LinkN1.imgInxE)
-					drt4ImgThickType = true;
-				}
-				
-				if(!LB2LinkN2.linkStatus) {
-					unlinkLine(LB2LinkN2.lineInx);
-					drawImgThin(LB2LinkN2.imgInxE)					
-					drt5ImgThickType = false;
-				}
-				else {
-					linkLine(LB2LinkN2.lineInx);
-					drawImgThick(LB2LinkN2.imgInxE)					
-					drt5ImgThickType = true;
-				}*/
+				}												
 				putDvcName();				
 			}
 			
@@ -1811,6 +2092,125 @@
 				}				
 			}		
 
+			function setRouteMap() {
+				var routeTab = document.getElementById('maptab');
+				var routeText, routeRow, routeCol, routData;
+
+				// set RoutingLB1to[]
+				routeRow = 1;
+				routeCol = 4;
+				routeData = "";
+				routeText = routeTab.rows[routeRow].cells[routeCol];
+				if(RoutingLB1to[0] != 0) {					
+					routeData = "linked";					
+				}
+				routeText.innerHTML = routeData;
+
+				routeRow = 1;
+				routeCol = 2;
+				routeData = "";
+				routeText = routeTab.rows[routeRow].cells[routeCol];
+				if(RoutingLB1to[1] != 0) {					
+					routeData = "linked";					
+				}
+				routeText.innerHTML = routeData;
+
+				routeRow = 1;
+				routeCol = 3;
+				routeData = "";
+				routeText = routeTab.rows[routeRow].cells[routeCol];
+				if(RoutingLB1to[2] != 0) {					
+					routeData = "linked";					
+				}
+				routeText.innerHTML = routeData;
+
+
+				// set RoutingLB2to[]
+				routeRow = 4;
+				routeCol = 1;
+				routeData = "";
+				routeText = routeTab.rows[routeRow].cells[routeCol];
+				if(RoutingLB2to[0] != 0) {					
+					routeData = "linked";					
+				}
+				routeText.innerHTML = routeData;
+
+				routeRow = 4;
+				routeCol = 2;
+				routeData = "";
+				routeText = routeTab.rows[routeRow].cells[routeCol];
+				if(RoutingLB2to[1] != 0) {					
+					routeData = "linked";					
+				}
+				routeText.innerHTML = routeData;
+
+				routeRow = 4;
+				routeCol = 3;
+				routeData = "";
+				routeText = routeTab.rows[routeRow].cells[routeCol];
+				if(RoutingLB2to[2] != 0) {					
+					routeData = "linked";					
+				}
+				routeText.innerHTML = routeData;
+
+				
+				// set RoutingN1to[]
+				routeRow = 2;
+				routeCol = 1;
+				routeData = "";
+				routeText = routeTab.rows[routeRow].cells[routeCol];
+				if(RoutingN1to[0] != 0) {					
+					routeData = "linked";					
+				}
+				routeText.innerHTML = routeData;
+
+				routeRow = 2;
+				routeCol = 4;
+				routeData = "";
+				routeText = routeTab.rows[routeRow].cells[routeCol];
+				if(RoutingN1to[1] != 0) {					
+					routeData = "linked";					
+				}
+				routeText.innerHTML = routeData;
+
+				routeRow = 2;
+				routeCol = 3;
+				routeData = "";
+				routeText = routeTab.rows[routeRow].cells[routeCol];
+				if(RoutingN1to[2] != 0) {					
+					routeData = "linked";					
+				}
+				routeText.innerHTML = routeData;
+				
+				// set RoutingN2to[]
+				routeRow = 3;
+				routeCol = 1;
+				routeData = "";
+				routeText = routeTab.rows[routeRow].cells[routeCol];
+				if(RoutingN2to[0] != 0) {					
+					routeData = "linked";					
+				}
+				routeText.innerHTML = routeData;
+
+				routeRow = 3;
+				routeCol = 4;
+				routeData = "";
+				routeText = routeTab.rows[routeRow].cells[routeCol];
+				if(RoutingN2to[1] != 0) {					
+					routeData = "linked";					
+				}
+				routeText.innerHTML = routeData;
+
+				routeRow = 3;
+				routeCol = 2;
+				routeData = "";
+				routeText = routeTab.rows[routeRow].cells[routeCol];
+				if(RoutingN2to[2] != 0) {					
+					routeData = "linked";					
+				}
+				routeText.innerHTML = routeData;				
+			}
+			
 			function getRoutingMap() {
 				fetch("http://118.163.52.188:8080/api/routing-map", {
 					method: 'GET'
@@ -1848,7 +2248,25 @@
 			
 			img.addEventListener("load", (e) => {										  				
 				Init_Node_Info();		
-				showThinInit();										
+				showThinInit();	
+				/*RoutingLB1to[0] = 1;
+				RoutingLB1to[1] = 1;
+				RoutingLB1to[2] = 1;
+
+				RoutingLB2to[0] = 1;
+				RoutingLB2to[1] = 1;
+				RoutingLB2to[2] = 1;
+
+				RoutingN1to[0] = 1;
+				RoutingN1to[1] = 1;
+				RoutingN1to[2] = 1;
+
+				RoutingN2to[0] = 1;
+				RoutingN2to[1] = 1;
+				RoutingN2to[2] = 1;*/
+
+				showMeshConn();	
+				//setRouteMap();													
 			});	
 			
 		</script>
@@ -1876,13 +2294,9 @@
 						imgBle.src="./image/FoundationBluetooth.svg";
 						enConnBLE = 0;						
 						console.log("connected")
-						showRootConn();	
-						//showLinkedNode();					
+						showRootConn();											
 						Set_Node_Info();
-						arrangeArray[0] = 0;
-						arrangeArray[1] = 0;
-						arrangeArray[2] = 0;
-						arrangeArray[3] = 0;						
+												
 					} catch (error) {
 						console.error('Error:', error);
 					}
@@ -1898,11 +2312,15 @@
 				disconnCmd = 0;
 				enConnBLE = 1;				
 				Init_Node_Info();
-				arrangeArray[4] = 0;
-				arrangeArray[9] = 0;
-				arrangeArray[14] = 0;
-				arrangeArray[19] = 0;
+				RoutingLB1to = [0,0,0];
+				RoutingLB2to = [0,0,0];
+				RoutingN1to = [0,0,0];
+				RoutingN2to = [0,0,0];
+				disconnNode = [0,0,0,0];
+				connNode = [0,0,0,0];
+				showLB1 = 0;
 				showThinInit();
+				setRouteMap();
 			}
 
 			async function sendMessage() {			
@@ -1927,73 +2345,110 @@
 				let value = [];		//event.target.value.getUint8(0);
 				for(i = 0; i < 15; i++) {
 					value[i] = event.target.value.getUint8(i);
-				}
+				}							
 
-				// remove empty node data
-				if((value[0] == 0) || (value[0] > 4)) {
-					value[0] = 0;
-					value[1] = 0;
-					value[2] = 0;
-					value[3] = 0;
-					value[4] = 0;
-				}
-				if((value[5] == 0) || (value[5] > 4)) {
-					value[5] = 0;
-					value[6] = 0;
-					value[7] = 0;
-					value[8] = 0;
-					value[9] = 0;
-				}
-				if((value[10] == 0) || (value[10] > 4)) {
-					value[10] = 0;
-					value[11] = 0;
-					value[12] = 0;
-					value[13] = 0;
-					value[14] = 0;
-				}
+				console.log(value[1]+"-"+value[2]+"-"+value[3]+"-"+value[4]);
 				
-				// move NTY into arrangeArray
-				for(i = 0; i < 15; i++) {					
-					if(value[i] == 255) {
-						value[i] = 0;
-					}
-					arrangeArray[14-i] = value[i];					
-				}
-
-				// adjust node position
-				for(i = 0; i < 15; i++) {
-					if(arrangeArray[0] == 0) {
-						arrangeArray[0] = arrangeArray[1];
-						arrangeArray[1] = arrangeArray[2];
-						arrangeArray[2] = arrangeArray[3];
-						arrangeArray[3] = arrangeArray[4];
-						arrangeArray[4] = arrangeArray[5];
-						arrangeArray[5] = arrangeArray[6];
-						arrangeArray[6] = arrangeArray[7];
-						arrangeArray[7] = arrangeArray[8];
-						arrangeArray[8] = arrangeArray[9];
-						arrangeArray[9] = arrangeArray[10];
-						arrangeArray[10] = arrangeArray[11];
-						arrangeArray[11] = arrangeArray[12];
-						arrangeArray[12] = arrangeArray[13];
-						arrangeArray[13] = arrangeArray[14];
-						arrangeArray[14] = arrangeArray[15];
-						arrangeArray[15] = 0;						
+				
+				// record LIB/NODE linked/unlinked 
+				var i;				
+				for(i = 1; i <= 4; i++) {
+					if(value[i] == 0) {
+						if(disconnNode[i-1] < disconnCnt)
+						disconnNode[i-1]++;
 					}
 					else {
-						break;
-					}				
-				}				
-
-				getTempHumiDcml();
+						connNode[i-1] = value[i];
+						disconnNode[i-1] = 0;
+					}
+				}
 				
-				NODE1_INFO.THMeter = TempDcmlN1 + "   " + HumiDcmlN1 + "%";
-				NODE2_INFO.THMeter = TempDcmlN2 + "   " + HumiDcmlN2 + "%";	
+				// unlink connection to MeshConn				
+				if(disconnNode[0] >= disconnCnt) {
+					RoutingLB1to = [0,0,0];
+					RoutingLB2to = [0,0,0];
+					RoutingN1to = [0,0,0];
+					RoutingN2to = [0,0,0];
+					disconnNode = [0,0,0,0];
+					connNode = [0,0,0,0];
+					showLB1 = 0;
+				}
+				else {
+					if(disconnNode[1] >= disconnCnt) {
+						RoutingLB2to = [0,0,0];
+						connNode[1] = 0;
+					}
+
+					if(disconnNode[2] >= disconnCnt) {
+						RoutingN1to = [0,0,0];
+						connNode[2] = 0;
+					}
+
+					if(disconnNode[3] >= disconnCnt) {
+						RoutingN2to = [0,0,0];
+						connNode[3] = 0;
+					}
+				}
+				
+				// link connection to MeshConn
+				if(connNode[0] == 1) {
+					showLB1 = 1;
+					if((connNode[1] == 2) && (connNode[2] == 0) && (connNode[3] == 0)) {
+						RoutingLB1to = [1,0,0];
+						RoutingLB2to = [1,0,0];
+						RoutingN1to = [0,0,0];
+						RoutingN2to = [0,0,0];
+					}
+					else if((connNode[1] == 2) && (connNode[2] == 3) && (connNode[3] == 0)) {
+						RoutingLB1to = [1,1,0];
+						RoutingLB2to = [1,1,0];
+						RoutingN1to = [1,1,0];
+						RoutingN2to = [0,0,0];
+					}
+					else if((connNode[1] == 2) && (connNode[2] == 0) && (connNode[3] == 4)) {
+						RoutingLB1to = [1,0,1];
+						RoutingLB2to = [1,0,1];
+						RoutingN1to = [0,0,0];
+						RoutingN2to = [1,1,0];
+					}
+					else if((connNode[1] == 2) && (connNode[2] == 3) && (connNode[3] == 4)) {
+						RoutingLB1to = [1,1,1];
+						RoutingLB2to = [1,1,1];
+						RoutingN1to = [1,1,1];
+						RoutingN2to = [1,1,1];
+					}
+					else if((connNode[1] == 0) && (connNode[2] == 3) && (connNode[3] == 0)) {
+						RoutingLB1to = [0,1,0];
+						RoutingLB2to = [0,0,0];
+						RoutingN1to = [1,0,0];
+						RoutingN2to = [0,0,0];
+					}
+					else if((connNode[1] == 0) && (connNode[2] == 3) && (connNode[3] == 4)) {
+						RoutingLB1to = [0,1,1];
+						RoutingLB2to = [0,0,0];
+						RoutingN1to = [1,0,1];
+						RoutingN2to = [1,0,1];
+					}
+					else if((connNode[1] == 0) && (connNode[2] == 0) && (connNode[3] == 4)) {
+						RoutingLB1to = [0,0,1];
+						RoutingLB2to = [0,0,0];
+						RoutingN1to = [0,0,0];
+						RoutingN2to = [1,0,0];
+					}
+				}
+
+				//getTempHumiDcml();
+				
+				//NODE1_INFO.THMeter = TempDcmlN1 + "   " + HumiDcmlN1 + "%";
+				//NODE2_INFO.THMeter = TempDcmlN2 + "   " + HumiDcmlN2 + "%";	
 							
-				reaadLbNodes();
-				setSysConn();								
-				showSystemConn();				
-				showTempHumi();												
+				//reaadLbNodes();
+				//setSysConn();								
+				//showSystemConn();				
+				//showTempHumi();
+				showRootConn();												
+				showMeshConn();
+				setRouteMap();
 
 				if(disconnCmd == 1) {
 					if (device.gatt.connected) {
